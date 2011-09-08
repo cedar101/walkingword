@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="walkingword" basedir="." default="usage">
+
+	<property name="name" value="walkingword"/>
+	<property name="version" value="1.0"/>
+	<property name="plugin-lib" value="KrAnalyzer_1.0.jar"/>
+
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="lib.dir" value="lib"/>
+
+	<path id="master-classpath">
+		<fileset dir="${lib.dir}">
+		    <include name="*.jar"/>
+		</fileset>
+	</path>
+
+    <target name="usage">
+		<echo message=""/>
+		<echo message="Lucene Korean Analyzer build"/>
+		<echo message="------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message="Available targets are:"/>
+		<echo message=""/>
+		<echo message="clean    --> Clean output dirs"/>
+		<echo message="build    --> Compile main Java sources and copy libraries"/>
+		<echo message="docs     --> Create complete Javadoc documentation"/>
+		<echo message="all      --> Clean, build, docs"/>
+		<echo message="dist     --> Create complete ServiceEngine Distrtibution File"/>
+		<echo message=""/>
+    </target>
+
+
+	<target name="clean" description="Clean output dirs (build, dist)">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+	</target>
+
+	<!-- =================================
+          Compile the main, sample soure trees.
+         ================================= -->
+    <target name="build" depends="build_main" description="Compile all source files." />
+
+    <target name="initdist">
+    	<mkdir dir="${dist.dir}"/>
+    </target>
+
+	<!--
+		Compile and build 
+	-->
+	<target name="build_main" depends="initdist" description="Compile main source tree java files into class files, generate jar files">
+		<mkdir dir="${build.dir}/classes"/>
+		<javac destdir="${build.dir}/classes" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+	</target>
+
+	<target name="create.jarfile" depends="build" description="Build the UCMP-OMP Common archive">
+		<delete file="${dist.dir}/${name}_${version}.jar"/>
+		<jar jarfile="${dist.dir}/${name}_${version}.jar" compress="true" basedir="${build.dir}/classes" manifest="src/META-INF/MANIFEST.MF" />
+	</target>
+</project>

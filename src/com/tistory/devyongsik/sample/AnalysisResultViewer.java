@@ -16,6 +16,7 @@ public class AnalysisResultViewer extends JFrame {
 	
 	public static String TITLE = "KeywordAnalysis";
 	
+	
 	public static AnalysisResultViewer keywordAnalysis;
 	public static JTextArea textTextArea = new JTextArea();
 	public static JTextArea urlTextArea = new JTextArea();

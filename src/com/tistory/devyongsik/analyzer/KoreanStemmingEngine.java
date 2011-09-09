@@ -97,7 +97,7 @@ public class KoreanStemmingEngine implements Engine {
 			    offSetAttrResult.setOffset(offSetAttrResult.startOffset(), offSetAttrResult.endOffset() - removedWordLength);
 			    
 			    TypeAttribute typeAttrResult = attributeSource.getAttribute(TypeAttribute.class);
-			    typeAttrResult.setType("word");
+			    typeAttrResult.setType("stemmedword");
 
 			    wordsStack.push(attributeSource.captureState());
 			    

@@ -39,7 +39,7 @@ public class AnalysisResultViewer extends JFrame {
 		// 레이아웃 설정
 		JPanel backgroundPanel = new JPanel(new GridLayout(2, 1));	
 		
-		JPanel topMainPanel = new JPanel(new GridLayout(2, 1));
+		JPanel topMainPanel = new JPanel(new GridLayout(1, 1));
 		
 		// text 입력 패널
 		JPanel textInputPanel = new JPanel(new BorderLayout());	
@@ -53,16 +53,16 @@ public class AnalysisResultViewer extends JFrame {
 		textInputPanel.add(textScrollPane,BorderLayout.CENTER);
 		
 		// url 입력 패널
-		JPanel urlInputPanel = new JPanel(new BorderLayout());
-		urlInputPanel.add(new JLabel("URL     : "),BorderLayout.WEST);
-		JScrollPane urlScrollPane = new JScrollPane();
-		urlScrollPane.setViewportView(urlTextArea);
-		urlScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		urlScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		urlInputPanel.add(urlScrollPane,BorderLayout.CENTER);
+//		JPanel urlInputPanel = new JPanel(new BorderLayout());
+//		urlInputPanel.add(new JLabel("URL     : "),BorderLayout.WEST);
+//		JScrollPane urlScrollPane = new JScrollPane();
+//		urlScrollPane.setViewportView(urlTextArea);
+//		urlScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		urlScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//		urlInputPanel.add(urlScrollPane,BorderLayout.CENTER);
 
 		topMainPanel.add(textInputPanel);
-		topMainPanel.add(urlInputPanel);
+//		topMainPanel.add(urlInputPanel);
 		
 		// 분석 결과 패널
 		JPanel resultPanel = new JPanel(new BorderLayout());

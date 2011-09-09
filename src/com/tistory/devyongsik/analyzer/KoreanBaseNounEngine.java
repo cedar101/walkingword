@@ -110,7 +110,7 @@ public class KoreanBaseNounEngine implements Engine {
 			comparedWord = term.substring(startIndex, endIndex);
 			
 			//매칭될 때 State 저장
-			if(nounsDic.contains(comparedWord) || customNounsDic.contains(comparedWord)) {
+			if((nounsDic.contains(comparedWord) || customNounsDic.contains(comparedWord)) && !term.equals(comparedWord)) {
 				termAttr.setEmpty();
 				termAttr.append(comparedWord);
 

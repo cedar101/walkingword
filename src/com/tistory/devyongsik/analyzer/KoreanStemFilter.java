@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 public class KoreanStemFilter extends TokenFilter {
 	private Log logger = LogFactory.getLog(KoreanStemFilter.class);
@@ -46,12 +45,6 @@ public class KoreanStemFilter extends TokenFilter {
 		} catch (Exception e) {
 			logger.error("스템필터에서 목록 조회 오류");
 			e.printStackTrace();
-		}
-
-		//원본 Token 리턴
-		if(logger.isDebugEnabled()) {
-			CharTermAttribute charTermAttr = input.getAttribute(CharTermAttribute.class);
-			logger.debug("원본 termAttr 리턴 : [" + charTermAttr.toString() + "]");
 		}
 		
 		return true;

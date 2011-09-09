@@ -92,7 +92,7 @@ public class KoreanLongestNounEngine implements Engine {
 			
 			if(endIndex > term.length()) {
 				
-				if(matchedTerm.length() > 0) { //endIndex가 끝까지 갔고, 매칭된 키워드가 있음
+				if(matchedTerm.length() > 0 && !term.equals(matchedTerm)) { //endIndex가 끝까지 갔고, 매칭된 키워드가 있음
 					termAttr.setEmpty();
 					termAttr.append(matchedTerm);
 

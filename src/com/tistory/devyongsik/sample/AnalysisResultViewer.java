@@ -2,9 +2,7 @@ package com.tistory.devyongsik.sample;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,8 +29,8 @@ public class AnalysisResultViewer extends JFrame {
 		setSize(800,500);
 		
 		// 프로그램 아이콘 설정(16pixel)
-		URL src = AnalysisResultViewer.class.getResource("/img/icon/analysis-icon.png");
-		setIconImage(new ImageIcon(src).getImage());
+		//URL src = AnalysisResultViewer.class.getResource("/img/icon/analysis-icon.png");
+		//setIconImage(new ImageIcon(src).getImage());
 		
 		// 타이틀설정
 		setTitle(TITLE);

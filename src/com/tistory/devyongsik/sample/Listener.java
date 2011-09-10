@@ -78,20 +78,11 @@ public class Listener implements ActionListener {
 		private String keyword;
 		private int startOffset;
 		private int endOffset;
-		public String getKeyword() {
-			return keyword;
-		}
 		public void setKeyword(String keyword) {
 			this.keyword = keyword;
 		}
-		public int getStartOffset() {
-			return startOffset;
-		}
 		public void setStartOffset(int startOffset) {
 			this.startOffset = startOffset;
-		}
-		public int getEndOffset() {
-			return endOffset;
 		}
 		public void setEndOffset(int endOffset) {
 			this.endOffset = endOffset;

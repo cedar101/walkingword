@@ -1,7 +1,9 @@
 package com.tistory.devyongsik.analyzer;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
@@ -14,12 +16,14 @@ import org.junit.Test;
 import com.tistory.devyongsik.analyzer.util.AnalyzerTestUtil;
 import com.tistory.devyongsik.analyzer.util.TestToken;
 
-public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
-	private Set<TestToken> nouns = null;
+public class KoreanBaseNounEngineTest extends AnalyzerTestUtil {
+	private Set<TestToken> nouns = null;	
+	private List<Engine> engines = new ArrayList<Engine>();
 	
 	@Before
 	public void initDictionary() {
 		nouns = new HashSet<TestToken>();
+		engines.add(KoreanBaseNounEngine.getInstance());
 	}
 
 	@Test
@@ -40,7 +44,9 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("사", 0, 1));
 		nouns.add(getToken("사랑하고회사동료동산", 0, 10));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		
+		
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -69,7 +75,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("서", 0, 1));
 		nouns.add(getToken("서울지방경찰청", 0, 7));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -99,7 +105,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("삼", 0, 1));
 		nouns.add(getToken("삼성전자연수원", 0, 7));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -129,7 +135,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("검", 0, 1));
 		nouns.add(getToken("검색엔진개발자", 0, 7));
 			
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -176,7 +182,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("지", 3, 4));
 		nouns.add(getToken("여러가지", 0, 4));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -206,7 +212,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("상품", 0, 2));
 		nouns.add(getToken("상품판매읔출장소", 0, 8));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 
@@ -236,7 +242,7 @@ public class KoreanBaseNounFilterTest extends AnalyzerTestUtil {
 		nouns.add(getToken("검", 0, 1));
 		nouns.add(getToken("검색엔진개발자읔", 0, 8));
 		
-		TokenStream stream = new KoreanBaseNounFilter(new KoreanCharacterTokenizer(reader));
+		TokenStream stream = new KoreanNounFilter(new KoreanCharacterTokenizer(reader), engines);
 		CharTermAttribute charTermAtt = stream.getAttribute(CharTermAttribute.class);
 		OffsetAttribute offSetAtt = stream.getAttribute(OffsetAttribute.class);
 

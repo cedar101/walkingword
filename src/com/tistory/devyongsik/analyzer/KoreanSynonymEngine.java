@@ -3,6 +3,7 @@ package com.tistory.devyongsik.analyzer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.document.Document;
@@ -170,19 +172,35 @@ public class KoreanSynonymEngine implements Engine {
 	}
 
 	@Override
-	public Stack<State> getAttributeSources(AttributeSource attributeSource) throws Exception {
+	public void collectNounState(AttributeSource attributeSource, Stack<State> nounsStack, Map<String, String> returnedTokens) throws Exception {
 		CharTermAttribute charTermAttr = attributeSource.getAttribute(CharTermAttribute.class);
+		OffsetAttribute offSetAttr = attributeSource.getAttribute(OffsetAttribute.class);
+		
+		returnedTokens.put(charTermAttr.toString()+"_"+offSetAttr.startOffset()+"_"+offSetAttr.endOffset(), "");
 		
 		if(logger.isDebugEnabled())
 			logger.debug("넘어온 Term : " + charTermAttr.toString());
 		
-		Stack<State> synonymsStack = new Stack<State>();
-
 		List<String> synonyms = getWords(charTermAttr.toString());
 
 		if (synonyms.size() == 0) new Stack<State>(); //동의어 없음
 
 		for (int i = 0; i < synonyms.size(); i++) {
+			
+			String synonymWord = synonyms.get(i);
+			String makeKeyForCheck = synonymWord + "_" + offSetAttr.startOffset() + "_" + offSetAttr.endOffset();
+			
+			if(returnedTokens.containsKey(makeKeyForCheck)) {
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("["+makeKeyForCheck+"] 는 이미 추출된 Token입니다. Skip");
+				}
+				
+				continue;
+				
+			} else {
+				returnedTokens.put(makeKeyForCheck, "");
+			}
 			
 			//#1. 동의어는 키워드 정보와 Type정보, 위치증가정보만 변경되고 나머지 속성들은 원본과 동일하기 때문에
 			//attributeSource로부터 변경이 필요한 정보만 가져와서 필요한 정보를 변경한다.
@@ -196,8 +214,8 @@ public class KoreanSynonymEngine implements Engine {
 			//타입을 synonym으로 설정한다. 나중에 명사추출 시 동의어 타입은 건너뛰기 위함
 			typeAtt.setType("synonym"); 
 			
-			synonymsStack.push(attributeSource.captureState()); //추출된 동의어에 대한 AttributeSource를 Stack에 저장
+			nounsStack.push(attributeSource.captureState()); //추출된 동의어에 대한 AttributeSource를 Stack에 저장
 		}
-		return synonymsStack;
+		return;
 	}
 }

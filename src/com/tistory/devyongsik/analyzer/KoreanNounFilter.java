@@ -1,6 +1,9 @@
 package com.tistory.devyongsik.analyzer;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -8,21 +11,26 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 
-public class KoreanBaseNounFilter extends TokenFilter {
-	private Log logger = LogFactory.getLog(KoreanBaseNounFilter.class);
+public class KoreanNounFilter extends TokenFilter {
+	private Log logger = LogFactory.getLog(KoreanNounFilter.class);
 	
 	private Stack<State> nounsStack = new Stack<State>();
-	private Engine engine;
+	private List<Engine> engines;
+	private Map<String, String> returnedTokens = new HashMap<String, String>();
 	
-	protected KoreanBaseNounFilter(TokenStream input) {
+	protected KoreanNounFilter(TokenStream input, List<Engine> engines) {
 		super(input);
-		this.engine = KoreanBaseNounEngine.getInstance();
+		this.engines = engines;
 	}
 
 	@Override
 	public boolean incrementToken() throws IOException {
 		if(logger.isDebugEnabled())
-			logger.debug("incrementToken KoreanBaseNounFilter");
+			logger.debug("incrementToken KoreanNounFilter");
+		
+		if(engines == null) {
+			throw new IllegalStateException("KoreanNounFilter의 engines가 Null입니다.");
+		}
 		
 
 		if (nounsStack.size() > 0) {
@@ -40,7 +48,11 @@ public class KoreanBaseNounFilter extends TokenFilter {
 		
 		try {
 			
-			nounsStack = engine.getAttributeSources(input.cloneAttributes());
+			for(Engine engine : engines) {
+				engine.collectNounState(input.cloneAttributes(), nounsStack , returnedTokens);
+			}
+			
+			returnedTokens.clear();
 			
 		} catch (Exception e) {
 			logger.error("명사필터에서 목록 조회 오류");

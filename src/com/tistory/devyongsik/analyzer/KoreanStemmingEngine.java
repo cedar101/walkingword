@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -66,18 +67,19 @@ public class KoreanStemmingEngine implements Engine {
 	}
 	
 	@Override
-	public Stack<State> getAttributeSources(AttributeSource attributeSource) throws Exception {
+	public void collectNounState(AttributeSource attributeSource, Stack<State> nounsStack, Map<String, String> returnedTokens) throws Exception {
 		CharTermAttribute characterAttr = attributeSource.getAttribute(CharTermAttribute.class);
+		OffsetAttribute offSetAttr = attributeSource.getAttribute(OffsetAttribute.class);
+		
 		String tokenTerm = characterAttr.toString();
+		returnedTokens.put(tokenTerm+"_"+offSetAttr.startOffset()+"_"+offSetAttr.endOffset(), "");
 		
 		int removedWordLength = 0;
-		
-		Stack<State> wordsStack = new Stack<State>();
 		
 		for(String eomiJosa : eomisJosaList) {
 			
 			if(tokenTerm.endsWith(eomiJosa)) {
-				//뒤에서부터 매칭되는 가장 긴 어미를 찾아 substring함.
+				//뒤에서부터 매칭되는 가장 긴 어미를 찾아 substring
 				String stemmedWord = tokenTerm.substring(0, tokenTerm.length() - eomiJosa.length());
 				removedWordLength = eomiJosa.length();
 				
@@ -85,31 +87,49 @@ public class KoreanStemmingEngine implements Engine {
 					if(logger.isDebugEnabled())
 						logger.debug("..in Stem : " + tokenTerm);
 					
-					return wordsStack; //스테밍 할 것이 없음 Token=어미/조사인 경우임
+					return; //스테밍 할 것이 없음 Token=어미/조사인 경우임
 				}
 				
 				CharTermAttribute termAttrResult = attributeSource.getAttribute(CharTermAttribute.class);
+				//offset 재조정
+				OffsetAttribute offSetAttrResult = attributeSource.getAttribute(OffsetAttribute.class);
+				
+				int startOffSet = offSetAttrResult.startOffset();
+				int endOffSet = offSetAttrResult.endOffset() - removedWordLength;
+				
+				String makeKeyForCheck = stemmedWord + "_" + startOffSet + "_" + endOffSet;
+				
+				if(returnedTokens.containsKey(makeKeyForCheck)) {
+					
+					if(logger.isDebugEnabled()) {
+						logger.debug("["+makeKeyForCheck+"] 는 이미 추출된 Token입니다. Skip");
+					}
+					
+					continue;
+					
+				} else {
+					returnedTokens.put(makeKeyForCheck, "");
+				}
+				
 				termAttrResult.setEmpty();
 				termAttrResult.append(stemmedWord);
 			    
-				//offset 재조정
-				OffsetAttribute offSetAttrResult = attributeSource.getAttribute(OffsetAttribute.class);
-			    offSetAttrResult.setOffset(offSetAttrResult.startOffset(), offSetAttrResult.endOffset() - removedWordLength);
+			    offSetAttrResult.setOffset(startOffSet, endOffSet);
 			    
 			    TypeAttribute typeAttrResult = attributeSource.getAttribute(TypeAttribute.class);
 			    typeAttrResult.setType("stemmedword");
 
-			    wordsStack.push(attributeSource.captureState());
+			    nounsStack.push(attributeSource.captureState());
 			    
 				if(logger.isDebugEnabled()) {
 					logger.debug("tokenTerm : " + tokenTerm);
 					logger.debug("stemming된 term : " + tokenTerm.substring(0, tokenTerm.length() - eomiJosa.length()));
 				}
 				
-				return wordsStack;
+				return;
 			}
 		}
 
-		return wordsStack;
+		return;
 	}
 }

@@ -1,6 +1,8 @@
 package com.tistory.devyongsik.analyzer;
 
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.analysis.ReusableAnalyzerBase;
 import org.apache.lucene.analysis.TokenStream;
@@ -15,13 +17,17 @@ public class KoreanAnalyzer extends ReusableAnalyzerBase {
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName,
 			final Reader reader) {
+		
+		List<Engine> nounExtractEngines = new ArrayList<Engine>();
+		nounExtractEngines.add(KoreanStemmingEngine.getInstance());
+		nounExtractEngines.add(KoreanCompoundNounEngine.getInstance());
+		nounExtractEngines.add(KoreanBaseNounEngine.getInstance());
+		nounExtractEngines.add(KoreanLongestNounEngine.getInstance());
+		nounExtractEngines.add(KoreanSynonymEngine.getInstance());
+		
 		Tokenizer tokenizer = new KoreanCharacterTokenizer(reader);
-		TokenStream tok = new KoreanStemFilter(tokenizer);
+		TokenStream tok = new KoreanNounFilter(tokenizer, nounExtractEngines);
 		tok = new KoreanStopFilter(tok);
-		tok = new KoreanCompoundNounFilter(tok);
-		tok = new KoreanBaseNounFilter(tok);
-		tok = new KoreanLongestNounFilter(tok);
-		tok = new KoreanSynonymFilter(tok);
 
 		return new TokenStreamComponents(tokenizer, tok);
 	}

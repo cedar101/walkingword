@@ -29,7 +29,7 @@ import com.tistory.devyongsik.analyzer.KoreanAnalyzer;
 public class TwittTrendKeywordViewer {
           
            private Map<String,Integer> results = new HashMap<String,Integer>();
-           private String searchKeyword = "휴가";
+           private String searchKeyword = "세금";
           
            public static void main(String[] args) throws TwitterException, IOException {
                      TwittTrendKeywordViewer viewer = new TwittTrendKeywordViewer();

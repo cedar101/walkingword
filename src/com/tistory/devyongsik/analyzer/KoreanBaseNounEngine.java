@@ -2,6 +2,7 @@ package com.tistory.devyongsik.analyzer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -18,8 +19,6 @@ import com.tistory.devyongsik.analyzer.dictionary.DictionaryType;
 
 public class KoreanBaseNounEngine implements Engine {
 	
-	//TODO 명사추출 Engine들이 동일한 명사를 중복 추출해내지 않도록..
-
 	private Log logger = LogFactory.getLog(KoreanBaseNounEngine.class);
 
 	private List<String> nounsDic = new ArrayList<String>();
@@ -69,13 +68,13 @@ public class KoreanBaseNounEngine implements Engine {
 	}
 
 	@Override
-	public Stack<State> getAttributeSources(AttributeSource attributeSource) throws Exception {
+	public void collectNounState(AttributeSource attributeSource, Stack<State> nounsStack, Map<String, String> returnedTokens) throws Exception {
 		CharTermAttribute termAttr = attributeSource.getAttribute(CharTermAttribute.class);
 		TypeAttribute typeAttr = attributeSource.getAttribute(TypeAttribute.class);
 		OffsetAttribute offSetAttr = attributeSource.getAttribute(OffsetAttribute.class);
 		PositionIncrementAttribute positionAttr = attributeSource.getAttribute(PositionIncrementAttribute.class);
 
-		Stack<State> nounsStack = new Stack<State>();
+		//Stack<State> nounsStack = new Stack<State>();
 
 		if(!typeAttr.type().equals("word")) {
 			
@@ -83,10 +82,13 @@ public class KoreanBaseNounEngine implements Engine {
 				logger.debug("명사 분석 대상이 아닙니다.");
 			}
 			
-			return nounsStack;
+			return;
 		}
 		
 		String term = termAttr.toString();
+		
+		returnedTokens.put(term+"_"+offSetAttr.startOffset()+"_"+offSetAttr.endOffset(), "");
+		
 		String comparedWord = null;
 		//1. 매칭이 되는대로 추출한다.
 		int startIndex = 0;
@@ -111,16 +113,34 @@ public class KoreanBaseNounEngine implements Engine {
 			
 			//매칭될 때 State 저장
 			if((nounsDic.contains(comparedWord) || customNounsDic.contains(comparedWord)) && !term.equals(comparedWord)) {
+
+				//offset도 계산해주어야 합니다. 그래야 하이라이팅이 잘 됩니다.
+				int startOffSet = orgStartOffset + startIndex;
+				int endOffSet = orgStartOffset + endIndex;
+				
+				String makeKeyForCheck = comparedWord + "_" + startOffSet + "_" + endOffSet;
+				
+				if(returnedTokens.containsKey(makeKeyForCheck)) {
+					
+					if(logger.isDebugEnabled()) {
+						logger.debug("["+makeKeyForCheck+"] 는 이미 추출된 Token입니다. Skip");
+					}
+					
+					endIndex++;
+					isPrevMatch = true;
+					
+					continue;
+					
+				} else {
+					returnedTokens.put(makeKeyForCheck, "");
+				}
+				
 				termAttr.setEmpty();
 				termAttr.append(comparedWord);
 
 				positionAttr.setPositionIncrement(1);  //추출된 명사이기 때문에 위치정보를 1로 셋팅
 				//타입을 noun으로 설정한다.
 				typeAttr.setType("noun"); 
-
-				//offset도 계산해주어야 합니다. 그래야 하이라이팅이 잘 됩니다.
-				int startOffSet = orgStartOffset + startIndex;
-				int endOffSet = orgStartOffset + endIndex;
 				
 				offSetAttr.setOffset(startOffSet , endOffSet);
 				
@@ -141,6 +161,6 @@ public class KoreanBaseNounEngine implements Engine {
 			}
 		}
 
-		return nounsStack;
+		return;
 	}
 }

@@ -2,6 +2,7 @@ package com.tistory.devyongsik.analyzer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -57,13 +58,11 @@ public class KoreanLongestNounEngine implements Engine {
 	}
 
 	@Override
-	public Stack<State> getAttributeSources(AttributeSource attributeSource) throws Exception {
+	public void collectNounState(AttributeSource attributeSource, Stack<State> nounsStack, Map<String, String> returnedTokens) throws Exception {
 		CharTermAttribute termAttr = attributeSource.getAttribute(CharTermAttribute.class);
 		TypeAttribute typeAttr = attributeSource.getAttribute(TypeAttribute.class);
 		OffsetAttribute offSetAttr = attributeSource.getAttribute(OffsetAttribute.class);
 		PositionIncrementAttribute positionAttr = attributeSource.getAttribute(PositionIncrementAttribute.class);
-
-		Stack<State> nounsStack = new Stack<State>();
 
 		if(!typeAttr.type().equals("word")) {
 			
@@ -71,10 +70,13 @@ public class KoreanLongestNounEngine implements Engine {
 				logger.debug("명사 분석 대상이 아닙니다.");
 			}
 			
-			return nounsStack;
+			return;
 		}
 		
 		String term = termAttr.toString();
+		
+		returnedTokens.put(term+"_"+offSetAttr.startOffset()+"_"+offSetAttr.endOffset(), "");
+		
 		String comparedWord = null;
 		
 		//1. 사전과 매칭되는 가장 긴 단어를 추출한다.
@@ -93,15 +95,35 @@ public class KoreanLongestNounEngine implements Engine {
 			if(endIndex > term.length()) {
 				
 				if(matchedTerm.length() > 0 && !term.equals(matchedTerm)) { //endIndex가 끝까지 갔고, 매칭된 키워드가 있음
+
+					int startOffSet = orgStartOffSet + prevMatchedStartIndex;
+					int endOffSet = orgStartOffSet + prevMatchedEndIndex;
+					
+					String makeKeyForCheck = matchedTerm + "_" + startOffSet + "_" + endOffSet;
+					
+					if(returnedTokens.containsKey(makeKeyForCheck)) {
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("["+makeKeyForCheck+"] 는 이미 추출된 Token입니다. Skip");
+						}
+						
+						matchedTerm = "";
+						
+						startIndex = prevMatchedEndIndex;
+						endIndex = startIndex + 1;
+						
+						continue;
+						
+					} else {
+						returnedTokens.put(makeKeyForCheck, "");
+					}
+					
 					termAttr.setEmpty();
 					termAttr.append(matchedTerm);
 
 					positionAttr.setPositionIncrement(1);  //추출된 명사이기 때문에 위치정보를 1로 셋팅
 					//타입을 noun으로 설정한다.
 					typeAttr.setType("noun"); 
-					
-					int startOffSet = orgStartOffSet + prevMatchedStartIndex;
-					int endOffSet = orgStartOffSet + prevMatchedEndIndex;
 					
 					offSetAttr.setOffset(startOffSet , endOffSet);
 					
@@ -142,7 +164,7 @@ public class KoreanLongestNounEngine implements Engine {
 			
 		}//end while
 
-		return nounsStack;
+		return;
 	}
 
 }

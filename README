@@ -1,1 +1,5 @@
 루씬의 Analyzer를 활용한 한글 명사 추출 모듈입니다.
+
+내부 명사 추출 Engine중 하나에
+이수명님께서 개발하신 한글형태소분석 Analyzer를 사용하였습니다.
+http://cafe.naver.com/korlucene

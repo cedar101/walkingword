@@ -24,6 +24,7 @@ public class KoreanAnalyzer extends ReusableAnalyzerBase {
 		nounExtractEngines.add(KoreanBaseNounEngine.getInstance());
 		nounExtractEngines.add(KoreanLongestNounEngine.getInstance());
 		nounExtractEngines.add(KoreanSynonymEngine.getInstance());
+		nounExtractEngines.add(KoreanMorphEngine.getInstance());
 		
 		Tokenizer tokenizer = new KoreanCharacterTokenizer(reader);
 		TokenStream tok = new KoreanNounFilter(tokenizer, nounExtractEngines);

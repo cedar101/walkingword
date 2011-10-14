@@ -58,7 +58,7 @@
 
 
 	<logger name="com.tistory.devyongsik" additivity="false">
-		<level value="warn" />
+		<level value="debug" />
 		<appender-ref ref="CONSOLE"/>
 	</logger>
 

@@ -30,6 +30,7 @@ public class AnalyzerTest extends AnalyzerTestUtil {
 		nouns.add(getToken("고속도로", 0, 4));
 		nouns.add(getToken("고속도", 0, 3));
 		nouns.add(getToken("고속", 0, 2));
+		nouns.add(getToken("속도", 1, 3));
 		nouns.add(getToken("고", 0, 1));
 		
 		Analyzer analyzer = new KoreanAnalyzer();

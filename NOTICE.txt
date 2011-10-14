@@ -13,4 +13,7 @@ http://lucene.apache.org/java/docs/index.html
 Twitter4j is Apache License 2.0
 http://twitter4j.org/en/index.html
 
+koreananalyzer is Apache License 2.0
+http://cafe.naver.com/korlucene
+
 사전은 세종21 프로젝트에 문의 하여 사용의 허락을 득하였습니다.

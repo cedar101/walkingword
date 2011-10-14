@@ -49,9 +49,10 @@
 	<!--
 		Compile and build 
 	-->
+	
 	<target name="build_main" depends="initdist" description="Compile main source tree java files into class files, generate jar files">
 		<mkdir dir="${build.dir}/classes"/>
-		<javac destdir="${build.dir}/classes" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true">
+		<javac destdir="${build.dir}/classes" source="1.6" target="1.6" debug="true" deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}"/>
 			<classpath refid="master-classpath"/>
 		</javac>
